@@ -23,7 +23,13 @@ from chirp.settings import RadioSetting, RadioSettingGroup, \
                 RadioSettingValueBoolean, RadioSettingValueList, \
                 RadioSettingValueInteger, RadioSettingValueString, \
                 RadioSettingValueFloat, RadioSettings
-from wouxun_common import wipe_memory, do_download, do_upload
+try:
+    from wouxun_common import wipe_memeory, do_download, do_upload
+except:
+    from . import wouxun_common
+    do_download = wouxun_common.do_download
+    do_upload = wouxun_common.do_upload
+    wipe_memory = wouxun_common.wipe_memory
 from textwrap import dedent
 
 LOG = logging.getLogger(__name__)
@@ -274,7 +280,7 @@ class KGUVD1PRadio(chirp_common.CloneModeRadio,
             return do_download(self, 0x0000, 0x2000, 0x0040)
         except errors.RadioError:
             raise
-        except Exception, e:
+        except Exception as e:
             raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
     def _upload(self):
@@ -285,7 +291,7 @@ class KGUVD1PRadio(chirp_common.CloneModeRadio,
             return do_upload(self, 0x0000, 0x2000, 0x0010)
         except errors.RadioError:
             raise
-        except Exception, e:
+        except Exception as e:
             raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
     def sync_in(self):
@@ -658,7 +664,7 @@ class KGUVD1PRadio(chirp_common.CloneModeRadio,
                     else:
                         LOG.debug("Setting %s = %s" % (setting, element.value))
                         setattr(obj, setting, element.value)
-                except Exception, e:
+                except Exception as e:
                     LOG.debug(element.get_name())
                     raise
 
@@ -680,7 +686,7 @@ class KGUVD1PRadio(chirp_common.CloneModeRadio,
                 else:
                     setting = self._memobj.fm_presets_1
                 setting[index] = value
-            except Exception, e:
+            except Exception as e:
                 LOG.debug(element.get_name())
                 raise
 
@@ -690,7 +696,7 @@ class KGUVD1PRadio(chirp_common.CloneModeRadio,
                 setattr(self._memobj.freq_ranges,
                         element.get_name(),
                         encode_freq(int(element.value)))
-            except Exception, e:
+            except Exception as e:
                 LOG.debug(element.get_name())
                 raise
 
@@ -1397,7 +1403,7 @@ class KGUV6DRadio(KGUVD1PRadio):
                     else:
                         LOG.debug("Setting %s = %s" % (setting, element.value))
                         setattr(obj, setting, element.value)
-                except Exception, e:
+                except Exception as e:
                     LOG.debug(element.get_name())
                     raise
 
@@ -1419,7 +1425,7 @@ class KGUV6DRadio(KGUVD1PRadio):
                 else:
                     setting = self._memobj.fm_presets_1
                 setting[index] = value
-            except Exception, e:
+            except Exception as e:
                 LOG.debug(element.get_name())
                 raise
 

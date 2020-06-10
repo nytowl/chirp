@@ -16,7 +16,13 @@
 """TYT uv3r (2.5kHz) radio management module"""
 
 from chirp import chirp_common, bitwise, directory
-from chirp.drivers.wouxun import do_download, do_upload
+
+try:
+    from wouxun_common import do_download, do_upload
+except:
+    from . import wouxun_common
+    do_download = wouxun_common.do_download
+    do_upload = wouxun_common.do_upload
 
 from chirp.settings import RadioSetting, RadioSettingGroup, \
     RadioSettingValueInteger, RadioSettingValueList, \

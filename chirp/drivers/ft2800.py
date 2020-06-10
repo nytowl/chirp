@@ -18,7 +18,11 @@ import os
 import logging
 
 from chirp import util, memmap, chirp_common, bitwise, directory, errors
-from yaesu_clone import YaesuCloneModeRadio
+try:
+    from yaesu_clone import YaesuCloneModeRadio
+except:
+    from . import yaesu_clone
+    YaesuCloneModeRadio = yaesu_clone.YaesuCloneModeRadio
 
 LOG = logging.getLogger(__name__)
 
@@ -201,7 +205,7 @@ class FT2800Radio(YaesuCloneModeRadio):
             self._mmap = _download(self)
         except errors.RadioError:
             raise
-        except Exception, e:
+        except Exception as e:
             raise errors.RadioError("Failed to communicate with radio: %s" % e)
         LOG.info("Downloaded in %.2f sec" % (time.time() - start))
         self.process_mmap()
@@ -214,7 +218,7 @@ class FT2800Radio(YaesuCloneModeRadio):
             _upload(self)
         except errors.RadioError:
             raise
-        except Exception, e:
+        except Exception as e:
             raise errors.RadioError("Failed to communicate with radio: %s" % e)
         LOG.info("Uploaded in %.2f sec" % (time.time() - start))
 

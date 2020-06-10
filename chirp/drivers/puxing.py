@@ -20,7 +20,13 @@ import os
 import logging
 
 from chirp import util, chirp_common, bitwise, errors, directory
-from chirp.drivers.wouxun import wipe_memory, do_download, do_upload
+try:
+    from chirp.drivers.wouxun import wipe_memeory, do_download, do_upload
+except:
+    from . import wouxun
+    do_download = wouxun.do_download
+    do_upload = wouxun.do_upload
+    wipe_memory = wouxun.wipe_memory
 
 LOG = logging.getLogger(__name__)
 
@@ -47,7 +53,7 @@ def puxing_prep(radio):
     for _i in range(0, 10):
         try:
             return _puxing_prep(radio)
-        except Exception, e:
+        except Exception as e:
             time.sleep(1)
 
     raise e
@@ -60,7 +66,7 @@ def puxing_download(radio):
         return do_download(radio, 0x0000, 0x0C60, 0x0008)
     except errors.RadioError:
         raise
-    except Exception, e:
+    except Exception as e:
         raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
 
@@ -71,7 +77,7 @@ def puxing_upload(radio):
         return do_upload(radio, 0x0000, 0x0C40, 0x0008)
     except errors.RadioError:
         raise
-    except Exception, e:
+    except Exception as e:
         raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
 POWER_LEVELS = [chirp_common.PowerLevel("High", watts=5.00),
@@ -372,7 +378,7 @@ def puxing_2r_download(radio):
         return do_download(radio, 0x0000, 0x0FE0, 0x0010)
     except errors.RadioError:
         raise
-    except Exception, e:
+    except Exception as e:
         raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
 
@@ -383,7 +389,7 @@ def puxing_2r_upload(radio):
         return do_upload(radio, 0x0000, 0x0FE0, 0x0010)
     except errors.RadioError:
         raise
-    except Exception, e:
+    except Exception as e:
         raise errors.RadioError("Failed to communicate with radio: %s" % e)
 
 PUXING_2R_MEM_FORMAT = """

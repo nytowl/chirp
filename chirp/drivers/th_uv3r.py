@@ -18,7 +18,13 @@
 import os
 import logging
 from chirp import chirp_common, bitwise, errors, directory
-from chirp.drivers.wouxun import do_download, do_upload
+try:
+    from chirp.drivers.wouxun import do_download, do_upload
+except:
+    from . import wouxun_common
+    do_download = wouxun.do_download
+    do_upload = wouxun.do_upload
+
 
 LOG = logging.getLogger(__name__)
 
